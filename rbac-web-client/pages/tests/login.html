@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="../../../rbac-rest-service/static/css/layui.css" media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<form id="login_form" class="layui-form" method="post" lay-filter="login">
+    <div class="layui-form-item">
+        <label class="layui-form-label">帐号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="account" required lay-verify="required" placeholder="请输入帐号" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" type="submit">登录</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript" src="../../static/layui.js"></script>
+<script>
+    //Demo
+    layui.use(['form', 'jquery'], function (form, $) {
+        //监听提交
+        form.on('submit(login)', function () {
+            //layer.msg($('#login_form').serialize());
+            $.post("http://localhost:8080/rbac-rest-service/rbac/account/login",
+                $('#login_form').serialize(),
+                function (data) {
+                    //alert(data.code + data.message);
+                    if (data.code == 200) {
+                        window.location.href = "../index.html";
+                    }
+                },
+                "JSON"
+            );
+            return false;
+        });
+    });
+
+</script>
+
+</body>
+</html>

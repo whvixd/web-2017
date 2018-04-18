@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit"/>
+    <title>系统管理 · Think.Admin Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="https://think.ctolog.com/static/upload/f47b8fe06e38ae99/08e8398da45583b9.png" />
+    <link rel="stylesheet" href="https://think.ctolog.com/static/plugs/bootstrap/css/bootstrap.min.css?ver=170908"/>
+    <link rel="stylesheet" href="https://think.ctolog.com/static/plugs/layui/css/layui.css?ver=170908"/>
+    <link rel="stylesheet" href="https://think.ctolog.com/static/theme/default/css/console.css?ver=170908">
+    <link rel="stylesheet" href="https://think.ctolog.com/static/theme/default/css/animate.css?ver=170908">
+    <script src="https://think.ctolog.com/static/plugs/require/require.js?ver=170908"></script>
+    <script src="https://think.ctolog.com/static/admin/app.js?ver=170908"></script>
+    <script>window.ROOT_URL='https://think.ctolog.com';</script>
+</head>
+
+<body>
+
+<div class="framework-topbar">
+    <div class="console-topbar">
+        <div class="topbar-wrap topbar-clearfix">
+            <div class="topbar-head topbar-left">
+                <a href="/admin.html" class="topbar-logo topbar-left">
+                    <span class="icon-logo">
+                        Think.Admin <sup>2.00 dev</sup>
+                    </span>
+                </a>
+            </div>
+            <a data-menu-target='m-2' class="topbar-home-link topbar-btn topbar-left">
+                <span> 系统管理</span>
+            </a>
+            <a data-menu-target='m-61' class="topbar-home-link topbar-btn topbar-left">
+                <span> 微信管理</span>
+            </a>
+            <a data-menu-node='m-94' data-open="/admin/index/main.html"
+               class="topbar-home-link topbar-btn topbar-left">
+                <span> 后台首页</span>
+            </a>
+            <a data-menu-target='m-87' class="topbar-home-link topbar-btn topbar-left">
+                <span> 插件案例</span>
+            </a>
+            <div class="topbar-info topbar-right">
+                <a data-reload data-tips-text='刷新' style='width:50px'
+                   class=" topbar-btn topbar-left topbar-info-item text-center">
+                    <span class='glyphicon glyphicon-refresh'></span>
+                </a>
+                <div class="topbar-left topbar-user">
+                    <div class="dropdown topbar-info-item">
+                        <a href="#" class="dropdown-toggle topbar-btn text-center" data-toggle="dropdown">
+                            <span class='glyphicon glyphicon-user'></span> admin </span>
+                            <span class="glyphicon glyphicon-menu-up transition" style="font-size:12px"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="topbar-info-btn">
+                                <a data-modal="/admin/index/pass.html?id=10000">
+                                    <span><i class='glyphicon glyphicon-lock'></i> 修改密码</span>
+                                </a>
+                            </li>
+                            <li class="topbar-info-btn">
+                                <a data-modal="/admin/index/info.html?id=10000">
+                                    <span><i class='glyphicon glyphicon-edit'></i> 修改资料</span>
+                                </a>
+                            </li>
+                            <li class="topbar-info-btn">
+                                <a data-load="/admin/login/out.html" data-confirm='确定要退出登录吗？'>
+                                    <span><i class="glyphicon glyphicon-log-out"></i> 退出登录</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="framework-body framework-sidebar-mini">
+    <div class="framework-sidebar hide">
+        <div class="sidebar-content">
+            <div class="sidebar-inner">
+                <div class="sidebar-fold">
+                    <span class="glyphicon glyphicon-option-vertical transition"></span>
+                </div>
+                <div data-menu-box="m-2">
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">系统配置</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-2-4'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-5' data-open="/admin/config/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-apple transition"></span>
+                                    </div>
+                                    <span class="nav-title">网站参数</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-6' data-open="/admin/config/file.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-save transition"></span>
+                                    </div>
+                                    <span class="nav-title">文件存储</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">系统权限</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-2-20'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-19' data-open="/admin/auth/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-user-secret transition"></span>
+                                    </div>
+                                    <span class="nav-title">权限管理</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-22' data-open="/admin/node/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-ellipsis-v transition"></span>
+                                    </div>
+                                    <span class="nav-title">节点管理</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-21' data-open="/admin/menu/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="glyphicon glyphicon-menu-hamburger transition"></span>
+                                    </div>
+                                    <span class="nav-title">系统菜单</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-29' data-open="/admin/user/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-users transition"></span>
+                                    </div>
+                                    <span class="nav-title">系统用户</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-2-9' data-open="/admin/log/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="glyphicon glyphicon-console transition"></span>
+                                    </div>
+                                    <span class="nav-title">操作日志</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div data-menu-box="m-61">
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">微信对接配置</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-61-62'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-63' data-open="/wechat/config/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-usb transition"></span>
+                                    </div>
+                                    <span class="nav-title">微信接口配置
+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">微信订制</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-61-68'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-70' data-open="/wechat/keys/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-paw transition"></span>
+                                    </div>
+                                    <span class="nav-title">关键字管理</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-71' data-open="/wechat/keys/subscribe.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-commenting-o transition"></span>
+                                    </div>
+                                    <span class="nav-title">关注自动回复</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-81' data-open="/wechat/keys/defaults.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-commenting-o transition"></span>
+                                    </div>
+                                    <span class="nav-title">无配置默认回复</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-69' data-open="/wechat/menu/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="glyphicon glyphicon-phone transition"></span>
+                                    </div>
+                                    <span class="nav-title">微信菜单定制</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">微信粉丝管理</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-61-65'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-66' data-open="/wechat/tags/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-tags transition"></span>
+                                    </div>
+                                    <span class="nav-title">粉丝标签</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-67' data-open="/wechat/fans/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-wechat transition"></span>
+                                    </div>
+                                    <span class="nav-title">已关注粉丝</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-86' data-open="/wechat/fans/back.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-reddit-alien transition"></span>
+                                    </div>
+                                    <span class="nav-title">粉丝黑名单</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">素材资源管理</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-61-82'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-85' data-open="/wechat/news/index.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-file-pdf-o transition"></span>
+                                    </div>
+                                    <span class="nav-title">图文列表</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-61-83' data-open="/wechat/news/add/id/1.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-folder-open-o transition"></span>
+                                    </div>
+                                    <span class="nav-title">添加图文</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div data-menu-box="m-87">
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">第三方插件</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-87-88'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-87-90' data-open="/demo/plugs/region.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-link transition"></span>
+                                    </div>
+                                    <span class="nav-title">PCAS 省市区</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a data-menu-node='m-87-93' data-open="/demo/plugs/editor.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-link transition"></span>
+                                    </div>
+                                    <span class="nav-title">富文本编辑器</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sidebar-nav main-nav">
+                        <div class="sidebar-title">
+                            <div class="sidebar-title-inner">
+                                <span class="sidebar-title-icon fa fa-caret-right transition"></span>
+                                <span class="sidebar-title-text">内置插件</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar-trans" style="display:none" data-menu-node='m-87-91'>
+                            <li class="nav-item">
+                                <a data-menu-node='m-87-92' data-open="/demo/plugs/file.html"
+                                   class="sidebar-trans">
+                                    <div class="nav-icon sidebar-trans">
+                                        <span class="fa fa-link transition"></span>
+                                    </div>
+                                    <span class="nav-title">文件上传</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="framework-container" style="left:0"></div>
+</div>
+
+
+
+<!-- 百度统计 开始 -->
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?aa2f9869e9b578122e4692de2bd9f80f";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+<!-- 百度统计 结束 -->
+
+</body>
+
+</html>

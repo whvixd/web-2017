@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="../../../rbac-rest-service/static/css/layui.css" media="all">
+    <!--<script type="text/javascript" src="../static/js/jquery.min.js"></script>-->
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<form id="update_form" class="layui-form" method="put" lay-filter="login">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="realName" required lay-verify="required"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">昵称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="nickName" required lay-verify="required"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-inline">
+            <input type="text" name="gender" required lay-verify="required"  autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" type="submit" id="update">修改</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript" src="../../static/layui.js"></script>
+<script>
+    //Demo
+    layui.use(['form', 'jquery'], function (form, $) {
+        //监听提交
+        form.on('tool', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+                layer.confirm('', function(index){
+                    obj.update();
+                    layer.close(index);
+                    //向服务端发送修改指令
+                    var data = $.extend(obj.data,{_method:'put'});
+                    $.post("http://localhost:8080/rbac-rest-service/rbac/user/profile",data
+                        ,function () {
+                            layer.msg('修改成功')
+                        },'json');
+                });
+        });
+    });
+
+</script>
+</body>
+</html>

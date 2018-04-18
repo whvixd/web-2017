@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>RBAC</title>
+
+    <link href="../static/itkee/css/itkee.login.css" rel="stylesheet" type="text/css">
+    <link href="../static/itkee/css/itkee.font-awesome.min.css" rel="stylesheet">
+    <style type="text/css">
+        #code {
+            font-family: Arial;
+            font-style: italic;
+            font-weight: bold;
+            border: 0;
+            letter-spacing: 2px;
+            color: blue;
+        }
+        div#bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: -10;
+            /*background-position: center 0;*/
+            /*background-repeat: no-repeat;*/
+            /*background-attachment: fixed;*/
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            zoom: 1;
+
+            opacity:1;
+            transition: opacity 1s linear;
+            -moz-transition: opacity 1s linear;
+            -webkit-transition: opacity 1s linear;
+            -o-transition: opacity 1s linear;
+        }
+    </style>
+    <script type="text/javascript" src="./checkCode.js">
+    </script>
+
+</head>
+
+<body>
+
+<div class="login-layout">
+    <div class="top">
+        <h5>【RBAC】 管理平台<em></em></h5>
+        <h2>系统管理中心</h2>
+        <!--<h6>商城&nbsp;&nbsp;|&nbsp;&nbsp;资讯&nbsp;&nbsp;|&nbsp;&nbsp;圈子&nbsp;&nbsp;|&nbsp;&nbsp;微商城&nbsp;&nbsp;|&nbsp;&nbsp;手机端</h6>-->
+    </div>
+    <form id="login_form" class="layui-form" method="post" lay-filter="login">
+        <div class="lock-holder">
+            <div class="form-group pull-left input-username">
+                <label>账号</label>
+                <input type="text" name="account" required lay-verify="required" placeholder="请输入帐号" autocomplete="off"
+                       class="input-text">
+            </div>
+            <i class="fa fa-ellipsis-h dot-left"></i> <i class="fa fa-ellipsis-h dot-right"></i>
+            <div class="form-group pull-right input-password-box">
+                <label>密码</label>
+                <input name="password" id="password" class="input-text" autocomplete="off" type="password" required
+                       lay-verify="required" pattern="[\S]{6}[\S]*" title="密码不少于6个字符">
+            </div>
+        </div>
+        <div class="avatar"><img src="../../rbac-rest-service/static/itkee/images/login/admin.png" alt=""></div>
+        <div class="submit">
+             <span>
+                <div>
+                    <input id="input" name="verify" required lay-verify="required" type="text" class="input-code" id="captcha" placeholder="输入验证" pattern="[A-z0-9]{4}" title="验证码为4个字符" autocomplete="off" />
+                    <input type="button" id="code" onclick="createCode()"/>//验证码
+                </div>
+            </span>
+            <span>
+                 <button class="input-button btn-submit"  type="submit">登录</button>
+            </span>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="../static/layui.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function (form, $) {
+        //监听提交
+        form.on('submit(login)', function () {
+            $.post("http://localhost:8080/rbac-rest-service/rbac/account/login",
+                $('#login_form').serialize(),
+                function (data) {
+                    //alert(data.code + data.message);
+                    if(validate()){
+                        if (data.code == 200 ) {
+
+                            sessionStorage.setItem('userProfileId',data.data.userid);
+
+                            if(validate()){
+                                layer.load(1, {
+                                    shade: [0.1,'#fff'] //0.1透明度的白色背景
+                                });
+                                setTimeout( function(){
+                                    window.location.href = "index.html";
+                                },4);
+                            }
+                        } else {
+                            layer.msg('用户名或密码错误');
+                        }
+                    }else{
+                        layer.alert('验证码错误', {
+                            icon: 1,
+                            skin: 'layer-ext-moon'
+                        })
+                    }
+                },
+                "JSON"
+            );
+            return false;
+        });
+    });
+
+
+
+</script>
+<!--动态background-->
+<div id="bg"></div>
+<script>
+    // 定义图片路径 {num} 为 可变的图片序号
+    var bgImgUrl = '../static/itkee/images/login/{num}.jpg', bgNum,
+        bgImgArr = [],
+        bgDiv = document.getElementById("bg");
+    // 组合数组 此处 1 为 图开始序号 结束 5
+    for (var i=1; i <= 5; i++){
+        bgImgArr.push(bgImgUrl.replace('{num}', i));
+    }
+    setBGimg();
+    function setBGimg(d){
+        if(!bgNum || bgNum >= bgImgArr.length) bgNum = 0;
+        bgDiv.style.opacity = .001;
+        setTimeout(function(){
+            bgDiv.style.backgroundImage = 'url('+ bgImgArr[bgNum] +')';
+            bgNum++;
+            bgDiv.style.opacity = 1;
+        }, 1000);
+        if(typeof d == 'undefined')
+            setInterval(function(){setBGimg(true);}, 6000); // 6000 是背景图片自动切换时间(单位 毫秒)
+    }
+</script>
+
+</body>
+</html>

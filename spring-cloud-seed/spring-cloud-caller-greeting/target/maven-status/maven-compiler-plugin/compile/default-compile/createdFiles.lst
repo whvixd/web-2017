@@ -1,0 +1,5 @@
+org\lanqiao\scloud\caller\GreetingClient.class
+org\lanqiao\scloud\caller\FeignClientExample.class
+org\lanqiao\scloud\caller\RestTemplateExample.class
+org\lanqiao\scloud\caller\GreetingService.class
+org\lanqiao\scloud\caller\GreetingFeignClient.class

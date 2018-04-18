@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Missing ANQI - LEEConnor</title>
+    <link rel="stylesheet" href="../../../rbac-rest-service/static/css/layui.css">
+    <script type="text/javascript" src="../../static/layui.js"></script>
+</head>
+<body>
+<!-- 页面头部Div -->
+<div class="layui-layout layui-layout-admin" id="backhere">
+    <div class="layui-header">
+        <div class="layui-logo">Missing安琪</div>
+
+        <!-- 头部区域导航栏ul   -->
+        <ul id="headGuide-container" class="layui-nav layui-layout-left">
+
+        </ul>
+
+        <!-- 用户登录信息显示栏 -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    &nbsp;<span id="userId"></span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">退了</a></li>
+        </ul>
+
+    </div>
+
+    <!-- 左侧导航栏div  -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul id="leftGuide-contains" class="layui-nav layui-nav-tree" lay-filter="test" >
+
+            </ul>
+        </div>
+    </div>
+
+    <!-- 内容主题div -->
+    <div id = "center" class="layui-body">
+        <!-- 内容主体区域 -->
+        <div  style="padding: 15px;" class="layui-anim layui-anim-scale">
+
+        </div>
+    </div>
+
+    <!-- 页脚div -->
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        layui.com
+
+        - 到底了，咱就得<a href="#backhere">往前看</a>
+    </div>
+</div>
+
+<!-- 头部区域 layui 的模板-->
+<script id="headGuide" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showLeftMune('{{ item.id}}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+
+<!-- 左侧区域 layui 的模板-->
+<script id="leftGuide" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showCenterHtml('{{ item.id}}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+
+<!--  点击事件的监听 -->
+<!-- 当点击到a标签， 响应查找， 回显数据在左侧导航栏-->
+<script>
+    function showLeftMune(id) {
+        layui.use(['jquery', 'laytpl'], function ($, laytpl) {
+            var leftCon = $("#leftGuide-contains");
+            $.ajax({
+                url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/"+id,
+                success: function (data) {
+                    laytpl($('#leftGuide').html()).render(data, function (html) {
+                        leftCon.html(html);
+                    });
+                }
+                , dataType: 'json'
+            });
+        });
+    }
+    //动态加载中心内容
+    function showCenterHtml(id) {
+        alert(id);
+        document.getElementById("#center").innerHTML ='<object type ="text/html" ' + 'data="5.html" width="100%" height="100%"></object>';
+    }
+</script>
+<script>
+    //JavaScript代码区域
+
+    //回显用户登录信息
+    layui.use(['element', 'jquery', 'laytpl'], function (element, $, laytpl) {
+        //  将 用户的 userName 放入右上角
+        var localTest = layui.data('test');
+        var userID = localTest.id; //获得
+        $.get("http://localhost:8080/rbac-rest-service/rbac/user/profile/" + userID
+            , function (data) {
+            var userRealName = data.data.realName;
+            document.getElementById("userId").innerHTML = userRealName;
+        });
+
+        <!-- 模板使用 ：通过ajax请求数据，将请求的数据的结果放到相对的位置上  -->
+        //回显首层菜单到一级菜单导航栏
+        var controller = function () {
+            var container = $("#headGuide-container");
+            $.get("http://localhost:8080/rbac-rest-service/rbac/menu/p/0", /*http://localhost:8080/rbac-rest-service/rbac/menu/findMune/" + userID,*/
+                function (data) {
+                    laytpl($('#headGuide').html()).render(data, function (html) {
+                    container.html(html);
+                });
+            });
+        };
+        controller();
+    });
+</script>
+</body>
+</html>

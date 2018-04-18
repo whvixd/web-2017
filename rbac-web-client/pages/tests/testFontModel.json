@@ -1,0 +1,26 @@
+{
+  "title": "Layui常用模块"
+,"list": [
+  {
+    "modname": "弹层"
+  ,"alias": "layer"
+  ,"site": "layer.layui.com"
+  }
+,{
+    "modname": "表单"
+  ,"alias": "form"
+  }
+,{
+    "modname": "分页"
+  ,"alias": "laypage"
+  }
+,{
+    "modname": "日期"
+  ,"alias": "laydate"
+  }
+,{
+    "modname": "上传"
+  ,"alias": "upload"
+  }
+]
+}

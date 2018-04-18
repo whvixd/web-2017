@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理界面</title>
+    <link rel="stylesheet" href="../../../rbac-rest-service/static/css/layui.css">
+    <script src="../../static/layui.js"></script>
+    <script src="../../static/lay/modules/laytpl.js"></script>
+
+
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">RBAC 权限管理系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+
+        <ul id="nav-container" class="layui-nav layui-layout-left">
+
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    马向阳
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">所有商品</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="javascript:;">列表三</a></dd>
+                        <dd><a href="">超链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">解决方案</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="">超链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+                <li class="layui-nav-item"><a href="">发布商品</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+
+            <div class="layui-btn-group demoTable">
+                <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+                <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+                <button class="layui-btn" data-type="isAll">验证是否全选</button>
+            </div>
+
+            <table class="layui-table" lay-data="{width: 892, height:332, url:'http://localhost:8080/rbac-rest-service/rbac/user/profile', page:true, id:'idTest'}" lay-filter="demo">
+                <thead>
+                <tr>
+                    <th lay-data="{checkbox:true, fixed: true}"></th>
+                    <th lay-data="{field:'id', width:80, sort: true, fixed: true}">ID</th>
+                    <th lay-data="{field:'realName', width:80}">姓名</th>
+                    <th lay-data="{field:'nickName', width:80, sort: true}">昵称</th>
+                    <th lay-data="{field:'gender', width:80}">性别</th>
+                    <th lay-data="{fixed: 'right', width:180, align:'center', toolbar: '#barDemo'}"></th>
+                </tr>
+                </thead>
+            </table>
+
+        </div>
+
+        <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        我是有底线的！
+    </div>
+</div>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="detail">查看</a>
+        <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del" methods="delete">删除</a>
+    </script>
+
+    <script type="text/javascript">
+        layui.use([ 'table','form','jquery','laytpl' ], function(table,form,$,laytpl) {
+
+            //监听工具条
+            table.on('tool', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                var data = obj.data; //获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值
+                var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+                if(layEvent === 'detail'){ //查看
+                    //do somehing
+                    layer.msg('ID：'+ data.id + ' 的查看操作');
+                }
+
+                if(layEvent === 'del'){ //删除
+                    layer.confirm('真的删除么', function(index) {
+                        obj.del(); //删除对应行（tr）的DOM结构
+                        layer.close(index);
+                        //向服务端发送删除指令
+                        layer.close(index);
+                        $.post("http://localhost:8080/rbac-rest-service/rbac/user/profile/" + data.id
+                            , {_method: "delete"}
+                            , function () {
+                                layer.msg("删除成功");
+                            });
+                    });
+                }
+
+                if(layEvent === 'edit'){ //编辑
+                    //do something
+                    obj.contenteditable=true
+                }
+            });
+         //监听工具条
+
+
+
+
+/////这是用tpl模板引擎渲染方法 1
+
+                $.ajax({
+
+                    url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/0",
+
+                    success: function (data) {
+
+                        var gettpl = document.getElementById('nav').innerHTML;   //获取拼接部分的内容
+                        laytpl(gettpl).render(data, function (html) {       //給拼接的模板绑定数据
+                            document.getElementById('nav-container').innerHTML = html;    // 吧生成的结构绑定在负责呈现内容的div中。
+                        });
+                    }
+
+                })
+//////////////////
+
+/////这是用tpl模板引擎渲染方法 2
+/*
+            var controller = function () {
+                var container = $("#nav-container")
+                $.ajax({
+                   url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/0",
+                   success: function (data) {
+//                    alert(data.data[0].title);
+                       laytpl($('#nav').html()).render(data, function (html) {
+                            container.html(html);
+                        });
+                    }
+                    , dataType: 'json'
+                });
+            };
+            controller();
+/////////////*/
+
+
+        });
+
+
+
+
+
+    </script>
+
+///////模板引擎
+    <script id="nav" type="text/html">
+            {{#  layui.each(d.data, function(index, item){ }}
+            <li class="layui-nav-item">
+                <a href="javascript:;">{{item.title}}</a>
+
+            </li>
+            {{#  }); }}
+            {{#  if(d.data.length === 0){ }}
+            无数据
+            {{#  } }}
+
+    </script>
+//////////
+
+
+    <script>
+        layui.use('table', function(){
+            var table = layui.table;
+            //监听表格复选框选择
+            table.on('checkbox', function(obj){
+                console.log(obj)
+            });
+
+
+
+            var $ = layui.$, active = {
+                getCheckData: function(){ //获取选中数据
+                    var checkStatus = table.checkStatus('userTable')
+                        ,data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                }
+                ,getCheckLength: function(){ //获取选中数目
+                    var checkStatus = table.checkStatus('userTable')
+                        ,data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                }
+                ,isAll: function(){ //验证是否全选
+                    var checkStatus = table.checkStatus('userTable');
+                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                }
+            };
+
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    </script>
+
+
+    <script>
+        //JavaScript代码区域
+        layui.use('element', function(){
+            var element = layui.element;
+
+        });
+    </script>
+
+    <script>
+        layui.use('table', function(){
+            var table = layui.table;
+        });
+    </script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理界面</title>
+    <link rel="stylesheet" href="../static/css/layui.css">
+    <script src="../static/layui.js"></script>
+    <script src="OperaData.js"></script>
+    <!--<script src="../static/itkee/js/jquery.js"></script>-->
+    <script src="../static/lay/modules/laytpl.js"></script>
+</head>
+<body>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">rbac 后台管理</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left" id="headMenus">
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../static/itkee/images/login/admin.png" class="layui-nav-img">
+                    <span id="userNickName"></span><!--昵称-->
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="login.html">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" id="leftMenus">
+            </ul>
+        </div>
+    </div>
+
+    <div style="padding: 15px;" class="layui-body">
+        <!-- 内容主体区域 -->
+            <div class="layui-btn-group demoTable">
+                <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+                <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+                <button class="layui-btn" data-type="isAll">验证是否全选</button>
+                <button class="layui-btn" data-type="saveUser" onclick="savaUser()">新增用户</button>
+            </div>
+
+            <table class="layui-table" lay-data="{width: 892, height:332, url:'http://localhost:8080/rbac-rest-service/rbac/user/profile', page:true, id:'idTest'}" lay-filter="demo">
+                <thead>
+                <tr>
+                    <th lay-data="{checkbox:true, fixed: true}"></th>
+                    <th lay-data="{field:'id', width:80, sort: true, fixed: true}">ID</th>
+                    <th lay-data="{field:'realName', width:80}">姓名</th>
+                    <th lay-data="{field:'nickName', width:80, sort: true}">昵称</th>
+                    <th lay-data="{field:'gender', width:80}">性别</th>
+                    <th lay-data="{fixed: 'right', width:180, align:'center', toolbar: '#barDemo'}"></th>
+                </tr>
+                </thead>
+            </table>
+
+            <script type="text/html" id="barDemo">
+                <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="detail">查看</a>
+                <a class="layui-btn layui-btn-mini" lay-event="edit" methods="put">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del" methods="delete">删除</a>
+            </script>
+
+            <script>
+                layui.use(['table','laytpl'], function(table,laytpl){
+                    //监听工具条
+                    table.on('tool', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                           var data = obj.data; //获得当前行数据
+                           var layEvent = obj.event; //获得 lay-event 对应的值
+                        if(layEvent === 'detail'){
+                            layer.msg('id:'+data.id+' 姓名:'+data.realName+' 昵称：'+data.nickName+' 性别：'+data.gender);
+                        } else if(layEvent === 'del'){
+                            layer.confirm('真的删除行么', function(index){
+                                obj.del(); //删除对应行（tr）的DOM结构
+                                layer.close(index);
+                                //向服务端发送删除指令
+                                $.post("http://localhost:8080/rbac-rest-service/rbac/user/profile/"+data.id
+                                ,{_method:'delete'}
+                                ,function () {
+                                        layer.msg('删除成功')
+                                    });
+                            });
+                        } else if(layEvent === 'edit'){
+                                /*layer.confirm('确定修改',function (index) {
+                                    layer.close(index);
+                                    if(obj.data.gender==='男'){
+                                        obj.data.gender=true;
+                                    }else{
+                                        obj.data.gender=false;
+                                    }
+                                    OperaDate(obj.data,'http://localhost:8080/rbac-rest-service/rbac/user/profile',"put");
+                                });*/
+                            //在这里面输入任何合法的js语句
+                            layer.open({
+                                type: 1 //Page层类型
+                                ,area: ['500px', '300px']
+                                ,title: '修改信息'
+                                ,shade: 0.6 //遮罩透明度
+                                ,maxmin: true //允许全屏最小化
+                                ,anim: 1 //0-6的动画形式，-1不开启
+                                ,content:'<iframe src="updateUser.html" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>'
+                            });
+                        }
+                    });
+                    //确保修改的内容能同步
+                    table.on('edit', function(obj){
+                        var value = obj.value //得到修改后的值
+                            ,data = obj.data //得到所在行所有键值
+                            ,field = obj.field; //得到字段
+                        data[field] = value; //更新缓存中的值
+                    });
+
+                    var $ = layui.$, active = {
+                        getCheckData: function(){ //获取选中数据
+                            var checkStatus = table.checkStatus('idTest')
+                                ,data = checkStatus.data;
+                            layer.alert(JSON.stringify(data));
+                        }
+                        ,getCheckLength: function(){ //获取选中数目
+                            var checkStatus = table.checkStatus('idTest')
+                                ,data = checkStatus.data;
+                            layer.msg('选中了：'+ data.length + ' 个');
+                        }
+                        ,isAll: function(){ //验证是否全选
+                            var checkStatus = table.checkStatus('idTest');
+                            layer.msg(checkStatus.isAll ? '全选': '未全选')
+                        }
+                    };
+
+                    $('.demoTable .layui-btn').on('click', function(){
+                        var type = $(this).data('type');
+                        active[type] ? active[type].call(this) : '';
+                    });
+
+                    var controller = function () {
+                        var container = $("#userNickName");
+                        $.ajax({
+                            url: "http://localhost:8080/rbac-rest-service/rbac/user/profile/"+sessionStorage.getItem('userProfileId'),
+                            success: function (data) {
+                                laytpl($('#nick').html()).render(data.data, function (html) {
+                                    container.html(html);
+                                });
+                            }
+                            , dataType: 'json'
+                        });
+                    };
+                    controller();
+                    /*菜单栏*/
+                    var controller1 = function () {
+                        var container = $("#headMenus");
+                        $.ajax({
+//                            url: "http://localhost:8080/rbac-rest-service/rbac/account/menu/"+sessionStorage.getItem('userProfileId'),//根据不同的角色获取不同的菜单
+                            url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/0",
+                            // url:"http://localhost:8080/rbac-rest-service/rbac/menuPid/1"
+                            success: function (result) {
+                                        laytpl($('#head').html()).render(result, function (html) {
+                                            container.html(html);
+                                        });
+                            }
+                            , dataType: 'json'
+                        });
+                    };
+                    controller1();
+                });
+
+                function savaUser() {
+                    layer.open({
+                        type: 1 //Page层类型
+                        ,area: ['450px', '300px']
+                        ,title: '添加用户'
+                        ,shade: 0.6 //遮罩透明度
+                        ,maxmin: true //允许全屏最小化
+                        ,anim: 1 //0-6的动画形式，-1不开启
+                        ,content:'<Iframe src="saveUser.html" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>'
+                    });
+                }
+            </script>
+
+            <script>
+                function showLeftMenu(id) {
+                    layui.use(['jquery', 'laytpl'], function ($, laytpl) {
+                        var leftCon = $("#leftMenus");
+                        $.ajax({
+                            url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/"+id,
+                            success: function (data) {
+                                laytpl($('#left').html()).render(data, function (html) {
+                                    leftCon.html(html);
+                                });
+                            }
+                            , dataType: 'json'
+                        });
+                    });
+                }
+               /* //动态加载中心内容
+                function showCenterHtml(id) {
+                    alert(id);
+                    document.getElementById("#center").innerHTML ='<object type ="text/html" ' + 'data="5.html" width="100%" height="100%"></object>';
+                }*/
+            </script>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+</script>
+
+<!--模板,用户登录进来的昵称-->
+<script id="nick" type="text/html">
+    {{ d.nickName }}
+</script>
+
+<!--模板,根据不同的用户的角色来显示不同的菜单栏-->
+<script id="head" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showLeftMenu('{{ item.id }}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+
+
+<!--模板,根据不同的用户的角色来显示不同的菜单栏-->
+<script id="left" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a>{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+<!--<script id="left" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showCenterHtml('{{ item.id}}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}-->
+
+<!--<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan id='cnzz_stat_icon_30088308'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D30088308' type='text/javascript'%3E%3C/script%3E"));</script>-->
+</body>
+</html>

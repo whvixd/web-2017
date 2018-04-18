@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理界面</title>
+    <link rel="stylesheet" href="../../rbac-rest-service/static/css/layui.css">
+    <script src="../static/layui.js"></script>
+    <script src="OperaData.js"></script>
+    <!--<script src="../static/itkee/js/jquery.js"></script>-->
+    <script src="../static/lay/modules/laytpl.js"></script>
+</head>
+<body>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">rbac 后台管理</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left" id="headGuide-container">
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="../../rbac-rest-service/static/itkee/images/login/admin.png" class="layui-nav-img">
+                    <span id="userNickName"></span><!--昵称-->
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="login.html">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" id="leftGuide-contains">
+            </ul>
+        </div>
+    </div>
+
+    <div style="padding: 15px;" class="layui-body">
+
+        <div id = "center" class="layui-body">
+            <!-- 内容主体区域 -->
+            <div  style="padding: 15px;" class="layui-anim layui-anim-scale">
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+    </div>
+</div>
+
+<script>
+    //JavaScript代码区域
+
+    //回显用户登录信息
+    layui.use(['element', 'jquery', 'laytpl'], function (element, $, laytpl) {
+        <!-- 模板使用 ：通过ajax请求数据，将请求的数据的结果放到相对的位置上  -->
+        //回显首层菜单到一级菜单导航栏
+        var controller = function () {
+            var container = $("#headGuide-container");
+            $.get("http://localhost:8080/rbac-rest-service/rbac/menu/p/0", /*http://localhost:8080/rbac-rest-service/rbac/menu/findMune/" + userID,*/
+                function (data) {
+                    laytpl($('#headGuide').html()).render(data, function (html) {
+                        container.html(html);
+                    });
+                });
+        };
+        controller();
+    });
+</script>
+<!-- 当点击到a标签， 响应查找， 回显数据在左侧导航栏-->
+<script>
+    function showLeftMune(id) {
+        layui.use(['jquery', 'laytpl'], function ($, laytpl) {
+            var leftCon = $("#leftGuide-contains");
+            $.ajax({
+                url: "http://localhost:8080/rbac-rest-service/rbac/menu/p/"+id,
+                success: function (data) {
+                    laytpl($('#leftGuide').html()).render(data, function (html) {
+                        leftCon.html(html);
+                    });
+                }
+                , dataType: 'json'
+            });
+        });
+    }
+    //动态加载中心内容
+    function showCenterHtml(id) {
+        alert(id);
+        document.getElementById("#center").innerHTML ='<object type ="text/html" ' + 'data="5.html" width="100%" height="100%"></object>';
+    }
+</script>
+
+
+
+<!--模板,用户登录进来的昵称-->
+<script id="nick" type="text/html">
+    {{ d.nickName }}
+</script>
+
+<!-- 头部区域 layui 的模板-->
+<script id="headGuide" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showLeftMune('{{ item.id}}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+
+<!-- 左侧区域 layui 的模板-->
+<script id="leftGuide" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <li class="layui-nav-item">
+        <a href="#" onclick="showCenterHtml('{{ item.id}}');return false;">{{ item.title }}</a>
+    </li>
+    {{#  }); }}
+</script>
+</body>
+</html>

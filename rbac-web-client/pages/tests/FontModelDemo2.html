@@ -1,0 +1,139 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- 全局-css -->
+    <link type="text/css" rel="stylesheet" href="../tools/css/basecore.css"/>
+    <link type="text/css" rel="stylesheet" href="../tools/css/style.css"/>
+    <!-- 全局-js -->
+    <script type='text/javascript' src='../tools/js/common.js'></script>
+    <script type="text/html" id="_template">
+        {{# for(var i = 0, len = d.length; i < len; i++){ }}
+        <li>
+            <p class="item-time">{{d[i].addDate}}</p>
+            <div class="item-title-row">
+                <div class="item-title">{{d[i].noticeTitle}}</div>
+                <div class="item-after"><a href="javascript:goToDetail('{{d[i].id}}')">进入详情<i class="icon icon-right"></i></a></div>
+            </div>
+            <div class="item-content">
+                <div class="item-media list-img"><p><img class="imgthanh" data-original="../../{{d[i].noticePic}}"/></p></div>
+                <div class="item-inner">
+                    <div class="item-title-row moredo3">
+                        {{d[i].noticeContent}}
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{# } }}
+    </script>
+    <title>重要通知列表</title>
+</head>
+<body class="bjF8F6F0">
+<div class="page-group">
+    <div class="page">
+
+        <div class="content" id="contentscroll">
+            <header>
+                <div class="top-bar-con">
+                    <div class="tc top-bar-txt">重要信息</div>
+                </div>
+            </header>
+            <!-- header_start-->
+
+            <!-- header_end   -->
+            <!-- center_start -->
+
+            <ul class="list-block media-list notice-list" id="noticeList">
+
+            </ul>
+            <!-- 没有数据时 -->
+            <div class="list_empty" id="emptyDiv" style="display:none;text-align:center">
+                <p class="logoimg"><img class="wht4" src="../tools/images/dlogo1.png"/></p>
+                <p class="emptycont"><span><font class="tmptytitle">暂无通知消息哦！</font><br></span></p>
+            </div>
+            <!-- center_end -->
+            <div class="list_loading" id="loadAnimate">
+                <span class="glyphicon"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 请在这底下写js -->
+<!-- 全局-js -->
+<script type='text/javascript' merge="true" src='../tools/js/core.js'></script>
+<script type="text/javascript">
+    var basePath = getRelativeRootPath();
+    var pNo = 1;
+    var pSize = 5;
+    var loadFlag = true;
+    var allList = new Array();
+    $(function(){
+        initNotice();
+        gotoBot();
+    });
+
+    function initNotice(){
+        $.encasedAjax(basePath + '/rest/mall/queryNoticeList/'+pNo+'/'+pSize, {},function (data) {
+            var html = "";
+            if(data.noticeList !=null && data.noticeList.length>0){
+                for(var i=0;i<data.noticeList.length;i++){
+                    allList.push(data.noticeList[i]);
+                }
+                var tpl = document.getElementById('_template').innerHTML; //读取模版
+                //方式一：异步渲染（推荐）
+                laytpl(tpl).render(allList, function(render){
+                    html += render;
+                });
+                $("#noticeList").html(html);
+                //图片延迟加载
+                imgoriginal();
+                if(data.noticeList.length == pSize){
+                    loadFlag = true;
+                    loadAnimate.innerHTML = '<span>上拉加载更多</span>';
+                }else{
+                    loadFlag = false;
+                    loadAnimate.innerHTML = '<span>没有更多了</span>';
+                }
+            }else{
+                loadFlag = false;
+                if(pNo==1){
+                    $("#emptyDiv").show();
+                    $("#noticeList").html(html);
+                    loadAnimate.innerHTML = '<span></span>';
+                    return;
+                }
+                loadAnimate.innerHTML = '<span>没有更多了</span>';
+            }
+
+        },{"async":true})
+
+    }
+
+    //分页
+    function gotoBot(){
+        $("#contentscroll").on("scroll", function() {
+            var windowHeight = document.getElementById('contentscroll').clientHeight;
+            var scrollHeight = document.getElementById('contentscroll').scrollHeight;
+            var scrollTop = document.getElementById('contentscroll').scrollTop + document.body.scrollTop;
+            if(scrollTop >= (scrollHeight - windowHeight - 100) && loadFlag) {
+                pNo++;
+                loadFlag = false;
+                loadAnimate.innerHTML = '<span class="glyphicon">正在加载中...</span>';
+                initNotice(pNo);
+            }
+        });
+    }
+
+    function goToDetail(id){
+        location.href="articleDetails.html?id="+id;
+
+    }
+</script>
+</body>
+</html>
